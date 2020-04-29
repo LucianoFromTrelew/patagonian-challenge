@@ -18,7 +18,8 @@ services:
     ports:
       - "5556:5432"
     volumes:
-      - "pg:/var/lib/postgresql/data"
+      - "test:/var/lib/postgresql/data"
     restart: "always"
 volumes:
   pg:
+  test:
