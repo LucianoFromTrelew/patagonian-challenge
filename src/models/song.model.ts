@@ -8,12 +8,21 @@ export class Song {
   @Column()
   name: string;
 
+  @Column("text")
+  fullResponse: string;
+
   @ManyToOne(() => Album)
   album: Album;
 
-  constructor(id: string = "", name: string = "", album: Album) {
+  constructor(
+    id: string = "",
+    name: string = "",
+    fullResponse: string = "",
+    album: Album
+  ) {
     this.id = id;
     this.name = name;
+    this.fullResponse = fullResponse;
     this.album = album;
   }
 }
