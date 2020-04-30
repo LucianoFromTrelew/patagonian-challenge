@@ -29,6 +29,7 @@ describe("Data load script", () => {
   afterAll(async () => {
     await conn.dropDatabase();
   });
+
   test("Displays help if -h or --help passed as parameter", () => {
     const args = ["--help", "-h"];
     args.forEach(flag => {
@@ -36,6 +37,7 @@ describe("Data load script", () => {
       expect(console.log as jest.Mock).toHaveBeenCalledWith(getHelp());
     });
   });
+
   test("Throws error if no parameter passed", async done => {
     try {
       await main([]);
@@ -43,6 +45,7 @@ describe("Data load script", () => {
       done();
     }
   });
+
   test("Throws error if an incorrect Artist's Spotify ID passed", async done => {
     try {
       await main(["asd"]);
@@ -51,6 +54,7 @@ describe("Data load script", () => {
       done();
     }
   });
+
   test("Fetches single artist, their albums, and their songs correctly", async () => {
     const duaLipaId = "6M2wZ9GZgrQXHCFfjv46we";
     await main([duaLipaId]);
@@ -61,6 +65,7 @@ describe("Data load script", () => {
     expect(albums).not.toHaveLength(0);
     expect(songs).not.toHaveLength(0);
   }, 10000);
+
   test("Fetches several artists, their albums, and their songs correctly", async () => {
     const duaLipaId = "6M2wZ9GZgrQXHCFfjv46we";
     const jBalvinId = "1vyhD5VmyZ7KMfW5gqLgo5";
