@@ -1,4 +1,5 @@
-import { Entity, PrimaryColumn, Column } from "typeorm";
+import { Entity, PrimaryColumn, Column, OneToMany } from "typeorm";
+import { Song } from "./song.model";
 @Entity()
 export class Artist {
   @PrimaryColumn()
@@ -12,6 +13,10 @@ export class Artist {
 
   @Column()
   imageUrl: string;
+
+  @OneToMany(type => Song, song => song.artist)
+  songs!: Song[];
+
   constructor(
     id: string = "",
     name: string = "",

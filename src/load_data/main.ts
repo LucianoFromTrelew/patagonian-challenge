@@ -75,7 +75,14 @@ async function fetchAlbumSongs(album: Album, token: string): Promise<Song[]> {
     .query(query)
     .then(res =>
       (res.body.items as any[]).map(
-        song => new Song(song.id, song.name, JSON.stringify(song), album)
+        song =>
+          new Song(
+            song.id,
+            song.name,
+            JSON.stringify(song),
+            album,
+            album.artist
+          )
       )
     )
     .catch(err => {
