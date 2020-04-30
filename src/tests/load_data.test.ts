@@ -28,6 +28,7 @@ describe("Data load script", () => {
   });
   afterAll(async () => {
     await conn.dropDatabase();
+    await conn.close();
   });
 
   test("Displays help if -h or --help passed as parameter", () => {

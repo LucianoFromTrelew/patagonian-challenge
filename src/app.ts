@@ -40,10 +40,6 @@ export async function getApp(conn: Connection) {
     "/songs/:songId",
     async (req: Request, res: Response, next: NextFunction) => {
       const { songId } = req.params;
-      if (!songId)
-        return res.status(400).send({
-          message: "Bad request - `songId` is required"
-        });
       try {
         const song = await conn.getRepository(Song).findOneOrFail(songId);
         const { available_markets, ...data } = JSON.parse(song.fullResponse);
