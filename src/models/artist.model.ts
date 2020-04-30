@@ -3,29 +3,31 @@ import { Song } from "./song.model";
 @Entity()
 export class Artist {
   @PrimaryColumn()
-  id: string;
+  id!: string;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column()
-  spotifyUrl: string;
+  spotifyUrl!: string;
 
   @Column()
-  imageUrl: string;
+  imageUrl!: string;
 
   @OneToMany(type => Song, song => song.artist)
   songs!: Song[];
 
-  constructor(
+  static create(
     id: string = "",
     name: string = "",
     spotifyUrl: string = "",
     imageUrl: string = ""
-  ) {
-    this.id = id;
-    this.name = name;
-    this.spotifyUrl = spotifyUrl;
-    this.imageUrl = imageUrl;
+  ): Artist {
+    const obj = new Artist();
+    obj.id = id;
+    obj.name = name;
+    obj.spotifyUrl = spotifyUrl;
+    obj.imageUrl = imageUrl;
+    return obj;
   }
 }

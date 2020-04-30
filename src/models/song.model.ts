@@ -4,31 +4,32 @@ import { Artist } from "./artist.model";
 @Entity()
 export class Song {
   @PrimaryColumn()
-  id: string;
+  id!: string;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column("text")
-  fullResponse: string;
+  fullResponse!: string;
 
   @ManyToOne(() => Album)
-  album: Album;
+  album!: Album;
 
   @ManyToOne(() => Artist, artist => artist.songs)
-  artist: Artist;
+  artist!: Artist;
 
-  constructor(
+  static create(
     id: string = "",
     name: string = "",
     fullResponse: string = "",
-    album: Album,
-    artist: Artist
-  ) {
-    this.id = id;
-    this.name = name;
-    this.fullResponse = fullResponse;
-    this.album = album;
-    this.artist = artist;
+    album: Album
+  ): Song {
+    const obj = new Song();
+    obj.id = id;
+    obj.name = name;
+    obj.fullResponse = fullResponse;
+    obj.album = album;
+    obj.artist = album.artist;
+    return obj;
   }
 }

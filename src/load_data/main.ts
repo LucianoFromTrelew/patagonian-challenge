@@ -15,14 +15,13 @@ async function fetchArtists(ids: string, token: string): Promise<Artist[]> {
     .set(headers)
     .query(query)
     .then(res =>
-      (res.body.artists as any[]).map(
-        artist =>
-          new Artist(
-            artist.id,
-            artist.name,
-            artist.external_urls.spotify,
-            artist.images[0].url
-          )
+      (res.body.artists as any[]).map(artist =>
+        Artist.create(
+          artist.id,
+          artist.name,
+          artist.external_urls.spotify,
+          artist.images[0].url
+        )
       )
     )
     .catch(err => {
@@ -43,15 +42,14 @@ async function fetchArtistAlbums(
     .query(query)
     .then(res =>
       (res.body.items as any[])
-        .map(
-          album =>
-            new Album(
-              album.id,
-              album.name,
-              album.external_urls.spotify,
-              album.images[0].url,
-              artist
-            )
+        .map(album =>
+          Album.create(
+            album.id,
+            album.name,
+            album.external_urls.spotify,
+            album.images[0].url,
+            artist
+          )
         )
         .filter((album, index, arr) => {
           // Delete duplicates by name
@@ -74,15 +72,8 @@ async function fetchAlbumSongs(album: Album, token: string): Promise<Song[]> {
     .set(headers)
     .query(query)
     .then(res =>
-      (res.body.items as any[]).map(
-        song =>
-          new Song(
-            song.id,
-            song.name,
-            JSON.stringify(song),
-            album,
-            album.artist
-          )
+      (res.body.items as any[]).map(song =>
+        Song.create(song.id, song.name, JSON.stringify(song), album)
       )
     )
     .catch(err => {

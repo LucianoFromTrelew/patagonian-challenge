@@ -4,31 +4,33 @@ import { Artist } from "./artist.model";
 @Entity()
 export class Album {
   @PrimaryColumn()
-  id: string;
+  id!: string;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column()
-  spotifyUrl: string;
+  spotifyUrl!: string;
 
   @Column()
-  imageUrl: string;
+  imageUrl!: string;
 
   @ManyToOne(type => Artist)
-  artist: Artist;
+  artist!: Artist;
 
-  constructor(
+  static create(
     id: string = "",
     name: string = "",
     spotifyUrl: string = "",
     imageUrl: string = "",
     artist: Artist
-  ) {
-    this.id = id;
-    this.name = name;
-    this.spotifyUrl = spotifyUrl;
-    this.imageUrl = imageUrl;
-    this.artist = artist;
+  ): Album {
+    const obj = new Album();
+    obj.id = id;
+    obj.name = name;
+    obj.spotifyUrl = spotifyUrl;
+    obj.imageUrl = imageUrl;
+    obj.artist = artist;
+    return obj;
   }
 }
