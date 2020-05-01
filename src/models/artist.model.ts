@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column, OneToMany } from "typeorm";
+import { Entity, PrimaryColumn, Column, OneToMany, Connection } from "typeorm";
 import { Song } from "./song.model";
 @Entity()
 export class Artist {
@@ -29,5 +29,16 @@ export class Artist {
     obj.spotifyUrl = spotifyUrl;
     obj.imageUrl = imageUrl;
     return obj;
+  }
+
+  static searchByName(
+    conn: Connection,
+    name: string
+  ): Promise<Artist | undefined> {
+    return conn
+      .getRepository(Artist)
+      .createQueryBuilder("artist")
+      .where("artist.name ILIKE :name", { name: `%${name}%` })
+      .getOne();
   }
 }
