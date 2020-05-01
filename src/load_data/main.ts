@@ -190,7 +190,6 @@ export async function main(args: string[]) {
     console.log(getHelp());
     return;
   }
-
   const ids = args.join(",");
   const token = await getSpotifyToken(
     process.env.SPOTIFY_CLIENT_ID as string,
