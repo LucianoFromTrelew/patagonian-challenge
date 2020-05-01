@@ -89,73 +89,112 @@ describe("App", () => {
       expect(res.body.message).toMatch(/not found/);
     });
 
-    test("returns only 10 songs if limit = 10", async () => {
-      const limit = 10;
-      const duaLipa = await conn
-        .getRepository(Artist)
-        .findOne({ where: { name: "Dua Lipa" } });
-      const res = await request(app)
-        .get("/songs")
-        .query({ artistName: "dua", limit });
-      expect(res.status).toBe(200);
-      expect(res.body.songs).toHaveLength(limit);
-    });
+    describe("pagination", () => {
+      let songs: Song[];
+      beforeAll(async () => {
+        const duaLipa = await conn
+          .getRepository(Artist)
+          .findOne({ where: { name: "Dua Lipa" } });
+        songs = await conn
+          .getRepository(Song)
+          .createQueryBuilder("song")
+          .leftJoinAndSelect("song.artist", "artist")
+          .where({ artist: duaLipa })
+          .orderBy("song.id")
+          .getMany();
+      });
 
-    test("returns paginated data", async () => {
-      const page = 1;
-      const duaLipa = await conn
-        .getRepository(Artist)
-        .findOne({ name: "Dua Lipa" });
-      const songs = ((await conn
-        .getRepository(Song)
-        .createQueryBuilder("song")
-        .leftJoinAndSelect("song.artist", "artist")
-        .where({ artist: duaLipa })
-        .orderBy("song.id")
-        .getMany()) as Song[]).slice(50);
-      const res = await request(app)
-        .get("/songs")
-        .query({ artistName: "dua", page });
-      expect(res.status).toBe(200);
-      expect(res.body.songs[0].songId).toBe(songs[0].id);
-    });
+      test("returns only 10 songs if limit = 10", async () => {
+        const limit = 10;
+        const res = await request(app)
+          .get("/songs")
+          .query({ artistName: "dua", limit });
+        expect(res.status).toBe(200);
+        expect(res.body.songs).toHaveLength(limit);
+      });
 
-    test("returns paginated data with limit", async () => {
-      const page = 2;
-      const limit = 10;
-      const duaLipa = await conn
-        .getRepository(Artist)
-        .findOne({ name: "Dua Lipa" });
-      const songs = (await conn
-        .getRepository(Song)
-        .createQueryBuilder("song")
-        .leftJoinAndSelect("song.artist", "artist")
-        .where({ artist: duaLipa })
-        .orderBy("song.id")
-        .getMany()) as Song[];
-      const res = await request(app)
-        .get("/songs")
-        .query({ artistName: "dua", page, limit });
-      expect(res.status).toBe(200);
-      expect(res.body.songs[0].songId).toBe(songs[page * limit].id);
-    });
+      test("returns all data is limit is big enough", async () => {
+        const limit = 1000;
+        const res = await request(app)
+          .get("/songs")
+          .query({ artistName: "dua", limit });
+        expect(res.status).toBe(200);
+        expect(res.body.songs).toHaveLength(songs.length);
+      });
 
-    test("returns 400 if page query param is not a number", async () => {
-      const page = "somePage";
-      const res = await request(app)
-        .get("/songs")
-        .query({ artistName: "dua", page });
-      expect(res.status).toBe(400);
-      expect(res.body.message).toMatch(/Bad request/);
-    });
+      test("returns the first 50 songs if no limit or page passed", async () => {
+        const res = await request(app)
+          .get("/songs")
+          .query({ artistName: "dua" });
+        expect(res.status).toBe(200);
+        expect(res.body.songs).toHaveLength(50);
+        expect(res.body.songs[0].songId).toBe(songs[0].id);
+      });
 
-    test("returns 400 if page query param is not a number", async () => {
-      const limit = "limit";
-      const res = await request(app)
-        .get("/songs")
-        .query({ artistName: "dua", limit });
-      expect(res.status).toBe(400);
-      expect(res.body.message).toMatch(/Bad request/);
+      test("returns the first 50 songs if page = 0", async () => {
+        const page = 0;
+        const res = await request(app)
+          .get("/songs")
+          .query({ artistName: "dua", page });
+        expect(res.status).toBe(200);
+        expect(res.body.songs).toHaveLength(50);
+        expect(res.body.songs[0].songId).toBe(songs[0].id);
+      });
+
+      test("returns paginated data", async () => {
+        const page = 1;
+        const res = await request(app)
+          .get("/songs")
+          .query({ artistName: "dua", page });
+        expect(res.status).toBe(200);
+        expect(res.body.songs[0].songId).toBe(songs[50].id);
+      });
+
+      test("returns paginated data with limit", async () => {
+        const page = 2;
+        const limit = 10;
+        const res = await request(app)
+          .get("/songs")
+          .query({ artistName: "dua", page, limit });
+        expect(res.status).toBe(200);
+        expect(res.body.songs[0].songId).toBe(songs[page * limit].id);
+      });
+
+      test("returns 400 if page query param is not a number", async () => {
+        const page = "somePage";
+        const res = await request(app)
+          .get("/songs")
+          .query({ artistName: "dua", page });
+        expect(res.status).toBe(400);
+        expect(res.body.message).toMatch(/Bad request/);
+      });
+
+      test("returns 400 if page query param is not a number", async () => {
+        const limit = "limit";
+        const res = await request(app)
+          .get("/songs")
+          .query({ artistName: "dua", limit });
+        expect(res.status).toBe(400);
+        expect(res.body.message).toMatch(/Bad request/);
+      });
+
+      test("returns 400 if page query param is not a positive number", async () => {
+        const page = -5;
+        const res = await request(app)
+          .get("/songs")
+          .query({ artistName: "dua", page });
+        expect(res.status).toBe(400);
+        expect(res.body.message).toMatch(/Bad request/);
+      });
+
+      test("returns 400 if page query param is not a positive number", async () => {
+        const limit = -50;
+        const res = await request(app)
+          .get("/songs")
+          .query({ artistName: "dua", limit });
+        expect(res.status).toBe(400);
+        expect(res.body.message).toMatch(/Bad request/);
+      });
     });
   });
 
