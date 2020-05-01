@@ -4,8 +4,9 @@ import { getConnection } from "./utils";
 
 async function run() {
   const app = await getApp(await getConnection());
-  app.listen(process.env.EXPRESS_PORT, () => {
-    console.log(`[Express] Listening on port ${process.env.EXPRESS_PORT}`);
+  const port = process.env.EXPRESS_PORT || 3000;
+  app.listen(port, () => {
+    console.log(`[Express] Listening on port ${port}`);
   });
 }
 
