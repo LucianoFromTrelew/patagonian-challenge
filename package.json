@@ -32,8 +32,9 @@
     "typescript": "^3.8.3"
   },
   "scripts": {
-    "start": "ts-node src",
-    "build": "npm run clean && tsc --outDir dist/ && npm run build-docs",
+    "start": "npm run build-app && node dist",
+    "build": "npm run build app && npm run build docs",
+    "build-app": "npm run clean && tsc --outDir dist/",
     "build-docs": "raml2html -i docs/api.raml -o index.html",
     "test": "jest --detectOpenHandles -i",
     "clean": "rm -rf dist",
