@@ -15,7 +15,7 @@ Environmental variables needed to be defined in `.env` and `env.test`
 - `SPOTIFY_CLIENT_ID`
 - `SPOTIFY_CLIENT_SECRET`
 
-Customize Express with the `EXPRESS_PORT` env var in `.env`
+Customize Express with the `EXPRESS_PORT` env var in `.env` (default is `3000`)
 
 ---
 
