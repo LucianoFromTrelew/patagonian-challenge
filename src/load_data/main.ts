@@ -178,7 +178,9 @@ function getSpotifyToken(
 }
 
 export function getHelp(): string {
-  return "Some help";
+  return `Accepted parameters:
+  - [-h | --help]
+  - <SPOTIFY_ARTIST_ID_0>,<SPOTIFY_ARTIST_ID_1>,...,`;
 }
 
 export async function main(args: string[]) {
