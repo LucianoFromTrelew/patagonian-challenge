@@ -5,7 +5,7 @@ import { Song } from "../models/song.model";
 
 export function getSongs(conn: Connection) {
   return async (req: Request, res: Response) => {
-    const { artistName, limit = "50", page = "1" } = req.query;
+    const { artistName, limit = "50", page = "0" } = req.query;
     if (!artistName)
       return res.status(400).send({
         message: "Bad request - `artistName` query parameter must be present"
@@ -42,7 +42,7 @@ export function getSongs(conn: Connection) {
     } catch {
       return res.status(400).send({
         message:
-          "Bad request - `page` or `limit` query parameter should be numbers"
+          "Bad request - `page` or `limit` query parameter should be positive numbers"
       });
     }
   };
