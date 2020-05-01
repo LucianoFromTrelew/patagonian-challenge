@@ -9,11 +9,23 @@ mediaType: application/json
     description: Get a list of songs based on the song title.
     queryParameters:
       artistName:
-        description: "The name of the artist (case insensitive and doesn't need to match the whole name of the artist)"
+        description: "Name of the artist (case insensitive and doesn't need to match the whole name of the artist)"
         required: true
         minLength: 3
         type: string
         example: "Red Hot Chili"
+      limit:
+        description: "Page size"
+        required: false
+        type: number
+        default: 50
+        example: 3
+      page:
+        description: "Page number (starts at 0)"
+        required: false
+        type: number
+        default: 0
+        example: 2
     responses:
       200:
         body:
@@ -31,6 +43,23 @@ mediaType: application/json
                   }
                 ]
               }
+      400:
+          body:
+            application/json - Example - No `artistName` provided:
+              example: |
+                {"message": "Bad request - `artistName` query parameter must be present"}
+            application/json - Example - `artistName` provided is shorter than 3 characters long:
+              example: |
+                {"message": "Bad request - `artistName` query parameter should be at least 3 characters long"}
+            application/json - Example - `limit` or `page` provided are incorrect values
+              example: |
+                {"message": "Bad request - `page` or `limit` query parameter should be positive numbers"}
+      404:
+          body:
+            application/json:
+              example: |
+                {"message": "Artist not found"}
+            
   /{songId}:
     description: Song entity
     get:

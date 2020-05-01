@@ -17,10 +17,7 @@ export function getSongs(conn: Connection) {
       });
     const name = (artistName as string).toLowerCase();
     const artist = await Artist.searchByName(conn, name);
-    if (!artist)
-      return res
-        .status(404)
-        .send({ message: `Artist [${artistName}] not found` });
+    if (!artist) return res.status(404).send({ message: `Artist not found` });
     const limitPage = parseInt(limit as string);
     const pageNumber = parseInt(page as string) * limitPage;
     try {

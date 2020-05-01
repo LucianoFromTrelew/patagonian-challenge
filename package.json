@@ -33,7 +33,10 @@
   },
   "scripts": {
     "start": "ts-node src",
+    "build": "npm run clean && tsc --outDir dist/ && npm run build-docs",
+    "build-docs": "raml2html -i docs/api.raml -o index.html",
     "test": "jest --detectOpenHandles -i",
+    "clean": "rm -rf dist",
     "clean-data": "docker-compose down ; docker volume rm $(docker volume ls -q | grep -i patagonian) ; docker-compose up -d"
   },
   "keywords": [],
